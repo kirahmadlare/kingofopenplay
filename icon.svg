@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#123c35"/>
+  <circle cx="355" cy="155" r="88" fill="#d9f05b"/>
+  <circle cx="326" cy="126" r="9" fill="#123c35"/>
+  <circle cx="367" cy="119" r="9" fill="#123c35"/>
+  <circle cx="394" cy="151" r="9" fill="#123c35"/>
+  <circle cx="348" cy="166" r="9" fill="#123c35"/>
+  <circle cx="385" cy="192" r="9" fill="#123c35"/>
+  <path d="M94 118h152c40 0 72 32 72 72v80c0 40-32 72-72 72H94V118Z" fill="#f7f4eb"/>
+  <path d="M203 321l72 115H171l-38-115h70Z" fill="#f7f4eb"/>
+  <text x="119" y="267" font-family="Arial, sans-serif" font-size="112" font-weight="900" fill="#123c35">OP</text>
+</svg>

@@ -1,0 +1,13 @@
+# Generated/intermediate brand sources
+logo-source.png
+logo-crown-source.png
+
+# Document render QA output
+guide-render/
+
+# Local caches
+__pycache__/
+*.pyc
+
+# Exported sessions may contain real player names
+openplay-*.json

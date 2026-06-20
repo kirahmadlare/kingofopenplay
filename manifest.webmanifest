@@ -1,0 +1,19 @@
+{
+  "name": "King of Open Play — Pickleball Organizer",
+  "short_name": "King Open Play",
+  "description": "Offline-first pickleball open play court rotation and scoring.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f4eb",
+  "theme_color": "#123c35",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./openplay-ph-logo.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

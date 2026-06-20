@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#123c35" />
+    <meta
+      name="description"
+      content="King of Open Play: a free offline pickleball organizer with fair court rotation, scoring, tournaments, spoken announcements, and 100 funny team names."
+    />
+    <meta property="og:title" content="King of Open Play" />
+    <meta
+      property="og:description"
+      content="Rule the rotation with fair court assignments, live scoring, tournaments, and 100 funny pickleball team names."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./openplay-ph-logo.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="King of Open Play" />
+    <meta
+      name="twitter:description"
+      content="Free offline pickleball open-play organizer, scoring app, and tournament manager."
+    />
+    <title>King of Open Play</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./openplay-ph-logo.png" type="image/png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#dashboard" aria-label="King of Open Play home">
+        <span class="brand-mark"><img src="./openplay-ph-logo.png" alt="" /></span>
+        <span>
+          <strong>King of Open Play</strong>
+          <small>Rule the rotation.</small>
+        </span>
+      </a>
+      <div class="header-actions">
+        <span id="save-status" class="save-status">Saved offline</span>
+        <button id="public-guide-button" class="button button-ghost" type="button">
+          <span aria-hidden="true">?</span> How to use
+        </button>
+        <button id="voice-toggle" class="button button-ghost voice-toggle" type="button" aria-pressed="true">
+          <span aria-hidden="true">🔊</span> Announcer on
+        </button>
+        <button id="install-button" class="button button-ghost hidden" type="button">Install app</button>
+        <button id="settings-button" class="icon-button" type="button" aria-label="Session settings">
+          ⚙
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section id="empty-state" class="hero hidden">
+        <div class="hero-copy">
+          <span class="eyebrow">Offline pickleball event simulator</span>
+          <h1>Build the right game before anyone steps on court.</h1>
+          <p>
+            Choose fair open play, a skill ladder, or a fixed-team tournament. Preview the rules,
+            register everyone, and let the courts run themselves—even without internet.
+          </p>
+          <button id="create-session-button" class="button button-primary button-large" type="button">
+            Build an event
+          </button>
+          <button id="hero-guide-button" class="button button-secondary button-large" type="button">
+            See how it works
+          </button>
+          <div class="hero-feature-strip" aria-label="Application highlights">
+            <span><i aria-hidden="true">☺</i><strong>100 funny team names</strong></span>
+            <span><i aria-hidden="true">⚖</i><strong>Fair player rotation</strong></span>
+            <span><i aria-hidden="true">🔊</i><strong>Spoken court calls</strong></span>
+          </div>
+          <div class="funny-name-preview">
+            <span class="eyebrow">Today’s matchup could be</span>
+            <div>
+              <strong id="landing-team-a">Dink Responsibly</strong>
+              <i>VS</i>
+              <strong id="landing-team-b">Court of Mild Chaos</strong>
+            </div>
+            <button id="shuffle-landing-teams" class="text-button" type="button">
+              Give me another matchup
+            </button>
+          </div>
+        </div>
+        <div class="hero-card" aria-hidden="true">
+          <div class="mini-court">
+            <span>King</span><span>Mabel</span><span>Erza</span><span>Bluey</span>
+          </div>
+          <div class="mini-score"><strong>08</strong><i>—</i><strong>06</strong></div>
+          <div class="mini-queue">
+            <span>Up next</span>
+            <div>1</div><div>2</div><div>3</div><div>4</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="app-shell" class="app-shell hidden">
+        <div class="session-heading">
+          <div>
+            <span class="eyebrow">Current session</span>
+            <h1 id="session-title">Saturday Open Play</h1>
+            <p id="session-meta">4 courts · Doubles · Games to 11</p>
+          </div>
+          <div class="session-actions">
+            <button id="export-button" class="button button-secondary" type="button">Export</button>
+            <label class="button button-secondary file-button">
+              Import
+              <input id="import-input" type="file" accept="application/json" />
+            </label>
+            <button id="new-session-button" class="button button-ghost danger-text" type="button">
+              New session
+            </button>
+          </div>
+        </div>
+
+        <nav class="tabs" aria-label="Application sections">
+          <button class="tab active" data-tab="dashboard" type="button"><span aria-hidden="true">▦</span> Courts</button>
+          <button class="tab" data-tab="players" type="button">
+            <span aria-hidden="true">♟</span> <span id="participants-tab-label">Players</span> <span id="player-count-badge" class="badge">0</span>
+          </button>
+          <button id="standings-tab" class="tab hidden" data-tab="standings" type="button"><span aria-hidden="true">★</span> Standings</button>
+          <button class="tab" data-tab="history" type="button"><span aria-hidden="true">◷</span> History</button>
+          <button class="tab" data-tab="guide" type="button"><span aria-hidden="true">?</span> Guide</button>
+          <button class="tab" data-tab="about" type="button"><span aria-hidden="true">ⓘ</span> About</button>
+        </nav>
+
+        <section id="dashboard-panel" class="tab-panel">
+          <div class="stats-grid">
+            <article class="stat-card accent">
+              <span>Waiting</span>
+              <strong id="waiting-count">0</strong>
+              <small>players in rotation</small>
+            </article>
+            <article class="stat-card">
+              <span>Playing</span>
+              <strong id="playing-count">0</strong>
+              <small>players on court</small>
+            </article>
+            <article class="stat-card">
+              <span>Games completed</span>
+              <strong id="games-count">0</strong>
+              <small>this session</small>
+            </article>
+            <article class="stat-card">
+              <span>Longest wait</span>
+              <strong id="longest-wait">—</strong>
+              <small>current queue</small>
+            </article>
+          </div>
+
+          <div class="section-toolbar">
+            <div>
+              <h2>Live courts</h2>
+              <p id="matchmaking-help">Winning teams face other winners as the ladder develops.</p>
+            </div>
+            <button id="fill-courts-button" class="button button-primary" type="button">
+              Fill open courts
+            </button>
+          </div>
+          <div id="courts-grid" class="courts-grid"></div>
+
+          <div class="queue-section">
+            <div class="section-toolbar">
+            <div>
+              <h2>Up next</h2>
+              <p id="queue-help">Teams stay together while waiting for a similar-result opponent.</p>
+              </div>
+              <button id="add-player-shortcut" class="button button-secondary" type="button">
+                + Add players
+              </button>
+            </div>
+            <div id="queue-list" class="queue-list"></div>
+          </div>
+        </section>
+
+        <section id="players-panel" class="tab-panel hidden">
+          <div id="open-play-registration">
+          <div class="section-toolbar">
+            <div>
+              <h2>Player check-in</h2>
+              <p>Add one player per line for fast registration of large groups.</p>
+            </div>
+            <div class="test-player-controls">
+              <select id="test-player-count" aria-label="Number of test players">
+                <option value="16">16 test players</option>
+                <option value="32">32 test players</option>
+                <option value="48" selected>48 test players</option>
+                <option value="56">56 test players</option>
+                <option value="64">64 test players</option>
+              </select>
+              <button id="generate-test-players" class="button button-secondary" type="button">
+                Generate test players
+              </button>
+            </div>
+          </div>
+          <form id="player-form" class="player-form">
+            <label for="player-names">Player names</label>
+            <textarea
+              id="player-names"
+              rows="4"
+              placeholder="Juan Dela Cruz&#10;Maria Santos&#10;Alex Reyes"
+              required
+            ></textarea>
+            <div class="form-footer">
+              <small>Duplicate names are skipped.</small>
+              <button class="button button-primary" type="submit">Add to rotation</button>
+            </div>
+          </form>
+          <div class="player-list-header">
+            <h2>Registered players</h2>
+            <input id="player-search" type="search" placeholder="Search players…" />
+          </div>
+          <div id="players-list" class="players-list"></div>
+          </div>
+
+          <div id="tournament-registration" class="hidden">
+            <div class="section-toolbar">
+              <div>
+                <h2>Team registration</h2>
+                <p>Register fixed doubles teams before generating tournament matches.</p>
+              </div>
+              <button id="generate-test-teams" class="button button-secondary" type="button">
+                Generate 8 test teams
+              </button>
+            </div>
+            <form id="team-form" class="player-form">
+              <div class="form-row">
+                <label>
+                  Team name
+                  <span class="input-with-action">
+                    <input id="team-name" placeholder="Kitchen Crushers" required />
+                    <button id="random-team-name" class="text-button" type="button">Surprise me</button>
+                  </span>
+                </label>
+                <label>
+                  Player 1
+                  <input id="team-player-one" placeholder="Juan Dela Cruz" required />
+                </label>
+              </div>
+              <div class="form-row team-form-last-row">
+                <label>
+                  Player 2
+                  <input id="team-player-two" placeholder="Maria Santos" required />
+                </label>
+                <button class="button button-primary" type="submit">Register team</button>
+              </div>
+            </form>
+            <div class="player-list-header">
+              <h2>Registered teams</h2>
+              <button id="generate-schedule" class="button button-primary" type="button">
+                Generate tournament schedule
+              </button>
+            </div>
+            <div id="teams-list" class="players-list"></div>
+          </div>
+        </section>
+
+        <section id="standings-panel" class="tab-panel hidden">
+          <div class="section-toolbar">
+            <div>
+              <h2>Competition standings</h2>
+              <p>Ranked by wins, then point difference when scores are entered.</p>
+            </div>
+          </div>
+          <div id="standings-list" class="standings-table"></div>
+          <div class="section-toolbar">
+            <div>
+              <h2>Match schedule</h2>
+              <p>Pending matches are assigned automatically as courts become free.</p>
+            </div>
+          </div>
+          <div id="schedule-list" class="history-list"></div>
+        </section>
+
+        <section id="history-panel" class="tab-panel hidden">
+          <div class="section-toolbar">
+            <div>
+              <h2>Game history</h2>
+              <p>Every completed game is stored with its teams and final score.</p>
+            </div>
+          </div>
+          <div id="history-list" class="history-list"></div>
+        </section>
+
+        <section id="about-panel" class="tab-panel hidden">
+          <div class="about-hero">
+            <div>
+              <span class="eyebrow">About King of Open Play</span>
+              <h2>More play. Less waiting.</h2>
+              <p>
+                King of Open Play is a free, offline-first organizer for pickleball open play,
+                skill ladders, scoring, and fixed-team tournaments.
+              </p>
+            </div>
+            <div class="about-mark" aria-hidden="true">
+              <img src="./openplay-ph-logo.png" alt="" />
+            </div>
+          </div>
+
+          <div class="about-grid">
+            <article class="about-card">
+              <span class="about-icon" aria-hidden="true">♟</span>
+              <h3>Built for organizers</h3>
+              <p>Register large groups, rotate players fairly, assign courts automatically, and record results without paddle stacking.</p>
+            </article>
+            <article class="about-card">
+              <span class="about-icon" aria-hidden="true">◉</span>
+              <h3>Private and offline</h3>
+              <p>Session data stays in this browser. There is no account, cloud database, tracking system, or required internet connection after installation.</p>
+            </article>
+            <article class="about-card">
+              <span class="about-icon" aria-hidden="true">◇</span>
+              <h3>Free to use</h3>
+              <p>The application is designed as a static website that can be shared publicly and hosted without a paid server.</p>
+            </article>
+          </div>
+
+          <div class="developer-card">
+            <div class="developer-avatar" aria-hidden="true">DEV</div>
+            <div>
+              <span class="eyebrow">Developer note</span>
+              <h3>Human-directed, AI-assisted</h3>
+              <p>
+                King of Open Play was conceived and directed by its developer, with AI used as a
+                development tool for planning, programming, testing, and interface iteration.
+                The product decisions and responsibility for publishing the application remain
+                with the developer.
+              </p>
+              <p class="developer-name">
+                Developed by <strong id="developer-credit">Developer King</strong>
+              </p>
+              <p class="developer-tagline">
+                An engineer in the airline industry who loves data and builds AI-powered
+                applications on the side.
+              </p>
+            </div>
+          </div>
+
+          <div class="about-grid publishing-grid">
+            <article class="about-card">
+              <span class="about-icon" aria-hidden="true">⌘</span>
+              <h3>Publish with Git</h3>
+              <p>Commit the project to a Git repository, then push it to GitHub. The source can be public so anyone can inspect, copy, or contribute according to your chosen license.</p>
+            </article>
+            <article class="about-card">
+              <span class="about-icon" aria-hidden="true">↗</span>
+              <h3>Host for free</h3>
+              <p>Deploy the repository directly using GitHub Pages, Cloudflare Pages, Netlify, or another static-site host. No build command or database is required.</p>
+            </article>
+            <article class="about-card">
+              <span class="about-icon" aria-hidden="true">⚑</span>
+              <h3>Before publishing</h3>
+              <p>Add your name, contact details if desired, a software license, screenshots, and clear instructions. Avoid committing private player data or exported event sessions.</p>
+            </article>
+          </div>
+
+          <div class="about-footer-note">
+            <strong>Data reminder:</strong> Clearing browser site data removes locally saved
+            sessions. Export important events before clearing data or changing devices.
+          </div>
+        </section>
+
+        <section id="guide-panel" class="tab-panel hidden">
+          <div class="guide-hero">
+            <div>
+              <span class="eyebrow">How to use King of Open Play</span>
+              <h2>From check-in to the final rally.</h2>
+              <p>Follow this organizer workflow. Each section explains what the app does and when to use each control.</p>
+            </div>
+            <img src="./openplay-ph-logo.png" alt="King of Open Play crown, paddle, and pickleball logo" />
+          </div>
+
+          <nav class="guide-jump" aria-label="Guide sections">
+            <a href="#guide-start">Start event</a>
+            <a href="#guide-register">Register</a>
+            <a href="#guide-courts">Run courts</a>
+            <a href="#guide-results">Results</a>
+            <a href="#guide-tournament">Tournament</a>
+            <a href="#guide-data">Offline data</a>
+          </nav>
+
+          <div class="guide-sections">
+            <article id="guide-start" class="guide-section">
+              <span class="guide-number">01</span>
+              <div>
+                <h3>Build the event</h3>
+                <p>Select <strong>New session</strong> or the settings icon, then choose the event type:</p>
+                <div class="guide-option-grid">
+                  <div><strong>Open Play</strong><small>Equal-game rotation for social sessions.</small></div>
+                  <div><strong>Skill Ladder</strong><small>Matches players using accumulated results.</small></div>
+                  <div><strong>Team Tournament</strong><small>Fixed doubles teams and round-robin standings.</small></div>
+                </div>
+                <p>Set the number of courts, singles or doubles, Play To value, Win By rule, scoring system, and matchmaking method. The event simulation explains the selected setup before you start.</p>
+              </div>
+            </article>
+
+            <article id="guide-register" class="guide-section">
+              <span class="guide-number">02</span>
+              <div>
+                <h3>Register participants</h3>
+                <p>Open <strong>Players</strong>. Paste one player name per line and select <strong>Add to rotation</strong>. Duplicate names are skipped. For testing, generate 16 to 64 sample players.</p>
+                <p>In Tournament mode, register a team name and two fixed partners. Existing individual players can be converted into pairs.</p>
+              </div>
+            </article>
+
+            <article id="guide-courts" class="guide-section">
+              <span class="guide-number">03</span>
+              <div>
+                <h3>Assign and manage courts</h3>
+                <p>Select <strong>Fill open courts</strong>. The app prioritizes rested players with fewer games, builds teams according to the chosen matchmaking mode, shows the VS introduction, and optionally announces names.</p>
+                <ul>
+                  <li>Use the speaker control to enable or mute announcements.</li>
+                  <li>Use <strong>Substitute a player</strong> if someone must leave early.</li>
+                  <li>Use <strong>Close court</strong> when the organizer's court time ends.</li>
+                  <li>Closed courts are ignored until reopened.</li>
+                </ul>
+              </div>
+            </article>
+
+            <article id="guide-results" class="guide-section">
+              <span class="guide-number">04</span>
+              <div>
+                <h3>Record rallies or final results</h3>
+                <p>For complete scoring, tap the team that won each rally. Traditional side-out mode tracks serving team, server number, and side-outs automatically.</p>
+                <p>When time is limited, select <strong>Team A won game</strong> or <strong>Team B won game</strong>. For more accurate skill matching, enter the final score. The app validates Play To, Win By, ties, and deuce scores.</p>
+                <div class="guide-callout"><strong>Example:</strong> Play To 11, Win By 2 accepts 11-9 or 12-10, but rejects 11-10 and 12-9.</div>
+              </div>
+            </article>
+
+            <article id="guide-tournament" class="guide-section">
+              <span class="guide-number">05</span>
+              <div>
+                <h3>Run a team tournament</h3>
+                <p>Register at least three fixed teams, then generate the schedule. The app creates all round-robin matches, prevents one team from being assigned to two courts at once, and automatically fills free courts.</p>
+                <p>Open <strong>Standings</strong> to view games played, wins, losses, points for, and point difference. Rankings use wins first, then point difference.</p>
+              </div>
+            </article>
+
+            <article id="guide-data" class="guide-section">
+              <span class="guide-number">06</span>
+              <div>
+                <h3>Save, export, and work offline</h3>
+                <p>Every change is saved automatically in the current browser. Use <strong>Export</strong> to download a JSON backup and <strong>Import</strong> to restore it on another device.</p>
+                <div class="guide-callout warning"><strong>Important:</strong> Browser data does not sync automatically. Clearing site data removes the local session, so export important events first.</div>
+              </div>
+            </article>
+          </div>
+
+          <div class="guide-download">
+            <div><strong>Need a printable manual?</strong><span>Download the full illustrated user guide for organizers.</span></div>
+            <a class="button button-primary" href="./King-of-Open-Play-User-Guide.docx" download>Download user guide</a>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="session-dialog" class="event-builder-dialog">
+      <form id="session-form" method="dialog" class="dialog-form event-builder">
+        <div class="dialog-heading">
+          <div>
+            <span class="eyebrow">Event builder</span>
+            <h2 id="dialog-title">Choose your game mode</h2>
+            <p>Configure the event before check-in so everyone knows how play will work.</p>
+          </div>
+          <button class="icon-button" value="cancel" formnovalidate aria-label="Close">×</button>
+        </div>
+        <div class="event-builder-layout">
+          <div class="event-builder-fields">
+            <fieldset class="event-mode-grid">
+              <legend>1. Choose an event</legend>
+              <label class="event-mode-card">
+                <input type="radio" name="eventType" value="openplay" checked />
+                <span class="mode-icon">↻</span>
+                <strong>Open Play</strong>
+                <small>Flexible individual rotation with fair rest turns.</small>
+              </label>
+              <label class="event-mode-card">
+                <input type="radio" name="eventType" value="ladder" />
+                <span class="mode-icon">▲</span>
+                <strong>Skill Ladder</strong>
+                <small>Results gradually group players at similar levels.</small>
+              </label>
+              <label class="event-mode-card">
+                <input type="radio" name="eventType" value="tournament" />
+                <span class="mode-icon">★</span>
+                <strong>Team Tournament</strong>
+                <small>Fixed teams compete through a round-robin table.</small>
+              </label>
+            </fieldset>
+            <div class="setup-section">
+              <span class="setup-step">2. Event details</span>
+        <label>
+          Session name
+          <input id="session-name" name="name" value="Saturday Open Play" required maxlength="60" />
+        </label>
+        <div class="form-row">
+          <label>
+            Number of courts
+            <input id="court-count" name="courtCount" type="number" value="4" min="1" max="20" required />
+          </label>
+          <label>
+            Game format
+            <select id="game-format" name="format">
+              <option value="doubles">Doubles (4 players)</option>
+              <option value="singles">Singles (2 players)</option>
+            </select>
+          </label>
+        </div>
+            </div>
+            <div class="setup-section">
+              <span class="setup-step">3. Gameplay rules</span>
+        <div class="form-row">
+          <label>
+            Play to
+            <input id="points-to-win" name="pointsToWin" type="number" value="11" min="1" max="99" required />
+          </label>
+          <label>
+            Win by
+            <select id="win-by" name="winBy">
+              <option value="2">2 points</option>
+              <option value="1">1 point</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          Scoring system
+          <select id="scoring-mode" name="scoringMode">
+            <option value="sideout">Traditional side-out (official default)</option>
+            <option value="rally">Rally scoring (provisional option)</option>
+          </select>
+          <small class="field-help">
+            Side-out: only the serving team scores. Rally: every rally scores a point.
+          </small>
+        </label>
+        <label>
+          Matchmaking
+          <select id="matchmaking-mode" name="matchmakingMode">
+            <option value="ladder">Winner vs winner (partners stay together)</option>
+            <option value="balanced">Balanced remix (switch partners by skill)</option>
+            <option value="random">Pure random every game</option>
+          </select>
+          <small class="field-help">
+            Every mode prioritizes players with fewer games and gives recently finished players a rest turn.
+          </small>
+        </label>
+            </div>
+          </div>
+          <aside class="event-preview">
+            <span class="eyebrow">Event simulation</span>
+            <h3 id="preview-title">Fair Rotation Open Play</h3>
+            <div class="preview-arena">
+              <div class="preview-court-lines">
+                <span>A1</span><span>A2</span><span>B1</span><span>B2</span>
+              </div>
+              <div class="preview-versus">VS</div>
+            </div>
+            <ol id="preview-flow" class="preview-flow"></ol>
+            <div class="preview-rules">
+              <span id="preview-format">Doubles</span>
+              <span id="preview-scoring">Side-out to 11</span>
+              <span id="preview-courts">4 courts</span>
+            </div>
+            <p id="preview-tip" class="preview-tip"></p>
+          </aside>
+        </div>
+        <div class="dialog-actions">
+          <button class="button button-ghost" value="cancel" formnovalidate>Cancel</button>
+          <button id="save-session-button" class="button button-primary" value="default">
+            Start session
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="confirm-dialog">
+      <form method="dialog" class="dialog-form compact">
+        <h2 id="confirm-title">Are you sure?</h2>
+        <p id="confirm-message"></p>
+        <div class="dialog-actions">
+          <button class="button button-ghost" value="cancel">Cancel</button>
+          <button class="button button-danger" value="confirm">Confirm</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="public-guide-dialog" class="public-guide-dialog">
+      <div class="public-guide-content">
+        <div class="dialog-heading">
+          <div>
+            <span class="eyebrow">King of Open Play</span>
+            <h2>How to use the application</h2>
+            <p>A quick organizer walkthrough before starting your first event.</p>
+          </div>
+          <button id="close-public-guide" class="icon-button" type="button" aria-label="Close guide">×</button>
+        </div>
+
+        <div class="public-guide-steps">
+          <article>
+            <span>01</span>
+            <div><h3>Choose an event</h3><p>Select Open Play, Skill Ladder, or Team Tournament. Configure courts, scoring, and matchmaking.</p></div>
+          </article>
+          <article>
+            <span>02</span>
+            <div><h3>Register everyone</h3><p>Add individual players in bulk or register fixed tournament teams.</p></div>
+          </article>
+          <article>
+            <span>03</span>
+            <div><h3>Fill the courts</h3><p>The app assigns eligible players fairly and announces each matchup when the announcer is enabled.</p></div>
+          </article>
+          <article>
+            <span>04</span>
+            <div><h3>Record results</h3><p>Track each rally, tap the winning team, or enter a validated final score.</p></div>
+          </article>
+          <article>
+            <span>05</span>
+            <div><h3>Keep playing</h3><p>Finished courts automatically receive the next eligible matchup. Substitute players or close courts when needed.</p></div>
+          </article>
+          <article>
+            <span>06</span>
+            <div><h3>Protect the session</h3><p>Everything saves locally. Export a JSON backup before clearing browser data or changing devices.</p></div>
+          </article>
+        </div>
+
+        <div class="public-guide-actions">
+          <a class="button button-secondary" href="./King-of-Open-Play-User-Guide.docx" download>
+            Download illustrated manual
+          </a>
+          <button id="guide-start-event" class="button button-primary" type="button">Build an event</button>
+        </div>
+      </div>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <noscript>This app requires JavaScript to manage and save your open-play session.</noscript>
+  </body>
+</html>

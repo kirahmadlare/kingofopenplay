@@ -495,7 +495,7 @@ function renderCourts() {
   const note = $("#court-assignment-note");
   note.classList.toggle("hidden", !hasOpenCourt || matchReady);
   if (hasOpenCourt && !matchReady) {
-    note.innerHTML = `<strong>Open courts are waiting.</strong> ${escapeHtml(assignmentBlockReason())} Select <b>Refresh courts</b> to repair stale queue state and retry.`;
+    note.innerHTML = `<strong>Open courts are waiting.</strong> ${escapeHtml(assignmentBlockReason())} If assignment appears stuck, select <b>Reload app</b> and try again. Your saved session will remain.`;
   }
   $("#fill-courts-button").disabled =
     !hasOpenCourt;
@@ -667,68 +667,11 @@ function renderCourts() {
     .join("");
 }
 
-function refreshCourtAssignments() {
-  if (!state.session) return;
+function reloadApplication() {
   if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-  state.announcingCourtIds.clear();
-
-  if (state.session.eventType === "tournament") {
-    const liveMatchIds = new Set(
-      state.session.courts
-        .filter((court) => court.game?.matchId)
-        .map((court) => court.game.matchId),
-    );
-    state.session.tournamentMatches.forEach((match) => {
-      if (match.status === "playing" && !liveMatchIds.has(match.id)) {
-        match.status = "pending";
-        delete match.courtId;
-        delete match.courtName;
-        delete match.startedAt;
-      }
-    });
-    saveSession();
-    render();
-    fillTournamentCourts();
-    showToast("Tournament courts refreshed and available matches reassigned.");
-    return;
-  }
-
-  const activePlayerIds = new Set(
-    state.session.courts
-      .filter((court) => court.game)
-      .flatMap((court) => [...court.game.teamA, ...court.game.teamB]),
-  );
-  state.session.players.forEach((player) => {
-    if (player.status === "playing" && !activePlayerIds.has(player.id)) {
-      player.status = "waiting";
-      player.waitingSince = now();
-      player.availableAfterGame = 0;
-    } else if (activePlayerIds.has(player.id)) {
-      player.status = "playing";
-    }
-  });
-
-  const validWaitingIds = new Set(
-    state.session.players
-      .filter((player) => player.status === "waiting")
-      .map((player) => player.id),
-  );
-  const teamSize = state.session.format === "doubles" ? 2 : 1;
-  const seenPlayers = new Set();
-  state.session.teamQueue = state.session.teamQueue.filter((team) => {
-    const valid =
-      Array.isArray(team.playerIds) &&
-      team.playerIds.length === teamSize &&
-      team.playerIds.every(
-        (id) => validWaitingIds.has(id) && !seenPlayers.has(id),
-      );
-    if (valid) team.playerIds.forEach((id) => seenPlayers.add(id));
-    return valid;
-  });
-
   saveSession();
-  render();
-  fillOpenCourts();
+  showToast("Reloading the app. Your session is saved.");
+  setTimeout(() => window.location.reload(), 350);
 }
 
 function tournamentTeamById(id) {
@@ -2123,7 +2066,7 @@ function bindEvents() {
   });
   $("#generate-schedule").addEventListener("click", generateTournamentSchedule);
   $("#fill-courts-button").addEventListener("click", fillOpenCourts);
-  $("#refresh-courts-button").addEventListener("click", refreshCourtAssignments);
+  $("#refresh-courts-button").addEventListener("click", reloadApplication);
 
   document.addEventListener("click", (event) => {
     const button = event.target.closest("button");

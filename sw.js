@@ -1,4 +1,4 @@
-const CACHE_NAME = "king-open-play-v29";
+const CACHE_NAME = "king-open-play-v30";
 const APP_SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest", "./icon.svg", "./openplay-ph-logo.png"];
 
 self.addEventListener("install", (event) => {

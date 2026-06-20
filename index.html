@@ -154,9 +154,18 @@
               <h2>Live courts</h2>
               <p id="matchmaking-help">Winning teams face other winners as the ladder develops.</p>
             </div>
-            <button id="fill-courts-button" class="button button-primary" type="button">
-              Fill open courts
-            </button>
+            <div class="court-toolbar-actions">
+              <button id="refresh-courts-button" class="button button-secondary" type="button">
+                ↻ Refresh courts
+              </button>
+              <button id="fill-courts-button" class="button button-primary" type="button">
+                Fill open courts
+              </button>
+            </div>
+          </div>
+          <div id="court-assignment-note" class="court-assignment-note hidden" role="status">
+            <strong>Courts not assigning?</strong>
+            Select <b>Refresh courts</b> to repair the waiting queue, then try filling again.
           </div>
           <div id="courts-grid" class="courts-grid"></div>
 

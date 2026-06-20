@@ -536,6 +536,23 @@ main {
   font-size: 13px;
 }
 
+.court-toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.court-assignment-note {
+  margin: -5px 0 14px;
+  padding: 10px 13px;
+  border: 1px solid #d7e3f0;
+  border-left: 4px solid #d4a85e;
+  border-radius: 10px;
+  background: #fff8e9;
+  color: #6f624b;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .courts-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2501,6 +2518,15 @@ dialog::backdrop {
 
   .section-toolbar .button {
     width: 100%;
+  }
+
+  .court-toolbar-actions {
+    width: 100%;
+  }
+
+  .court-toolbar-actions .button {
+    flex: 1;
+    width: auto;
   }
 
   .test-player-controls {

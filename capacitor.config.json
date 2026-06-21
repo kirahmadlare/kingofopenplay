@@ -1,0 +1,8 @@
+{
+  "appId": "com.developerking.kingofopenplay",
+  "appName": "King of Open Play",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#f5f8fc"
+  }
+}

@@ -16,6 +16,16 @@ After GitHub Pages finishes deploying:
 
 https://kirahmadlare.github.io/kingofopenplay/
 
+## Android application
+
+Download the current Android beta from the live website or directly from:
+
+https://kirahmadlare.github.io/kingofopenplay/downloads/King-of-Open-Play-Android-v1.0.0-beta.1.apk
+
+The APK supports Android 7.0 and newer. Android may ask users to allow
+installation from their browser because this beta is distributed outside
+Google Play. Build and publishing details are available in `ANDROID.md`.
+
 ## Features
 
 - Fast bulk player registration (one name per line)

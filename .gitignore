@@ -11,3 +11,12 @@ __pycache__/
 
 # Exported sessions may contain real player names
 openplay-*.json
+# Android/Capacitor generated files
+node_modules/
+.pnpm-store/
+www/
+android/.gradle/
+android/.idea/
+android/local.properties
+android/app/build/
+android/build/

@@ -2497,6 +2497,23 @@ dialog::backdrop {
     position: sticky;
     z-index: 10;
     top: 72px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .tab {
+    min-width: 0;
+    padding: 8px 5px;
+    gap: 4px;
+    font-size: 12px;
+    line-height: 1.1;
+  }
+
+  .tab .badge {
+    min-width: 18px;
+    padding: 2px 4px;
+    font-size: 9px;
   }
 
   .stats-grid {

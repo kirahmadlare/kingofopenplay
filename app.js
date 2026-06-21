@@ -291,7 +291,7 @@ function rotationCandidates() {
     state.session.courtCount === 1
       ? candidates
       : candidates.filter(
-          (player) => player.availableAfterGame <= state.session.history.length,
+          (player) => (player.availableAfterGame || 0) <= state.session.history.length,
         );
   const playersPerGame = state.session.format === "doubles" ? 4 : 2;
   const hasLiveCourt = state.session.courts.some((court) => court.game);
@@ -1076,6 +1076,7 @@ function addPlayers(text) {
       losses: 0,
       joinedAt: joinedAt + index,
       waitingSince: joinedAt + index,
+      availableAfterGame: 0,
     });
   });
   saveSession();
